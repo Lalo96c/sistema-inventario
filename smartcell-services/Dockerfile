@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     zip \
     unzip \
+    nginx \
+    gettext-base \
     libzip-dev \
     libpng-dev \
     libjpeg62-turbo-dev \
@@ -47,4 +49,15 @@ RUN sed -i 's/listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/' /usr/local/etc/php
 
 WORKDIR /var/www/html
 
-CMD ["php-fpm"]
+COPY . /var/www/html
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+COPY nginx/default.conf.template /etc/nginx/conf.d/default.conf.template
+
+ENV PORT=80
+
+EXPOSE 80
+
+CMD ["sh", "-c", "envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && php-fpm -D && exec nginx -g 'daemon off;' "]
