@@ -62,11 +62,6 @@ RUN mkdir -p database \
 RUN chmod -R 775 storage bootstrap/cache database \
     && chown -R www-data:www-data /var/www/html
 
-# Configuración Laravel
-RUN php artisan config:clear
-RUN php artisan cache:clear
-RUN php artisan route:clear
-
 # Migraciones
 RUN php artisan migrate --force || true
 
