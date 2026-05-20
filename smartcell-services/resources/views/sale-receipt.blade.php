@@ -504,8 +504,7 @@
     <div class="container">
         <div class="ticket-header">
             <div class="company-footer">
-                <img src="{{ env('FRONTEND_URL', 'http://localhost:5173') }}/logo.png" alt="Beatcell Logo"
-                    onerror="this.style.display='none'">
+                <img src="{{ env('FRONTEND_URL') }}/logo.png" alt="Beatcell Logo" onerror="this.style.display='none'">
                 <div class="company-name">Beatcell</div>
                 <div class="company-info">
                     <p>AV. LA UNION N° 1496 Piso 4 - Villa Maria Del Triunfo, Lima, Perú</p>
@@ -534,7 +533,8 @@
                 <div class="detail-card">
                     <strong>Cliente</strong>
                     <p>{{ optional($sale->client)->first_name ?? '---' }}
-                        {{ optional($sale->client)->last_name ?? '' }}</p>
+                        {{ optional($sale->client)->last_name ?? '' }}
+                    </p>
                     <strong>DNI</strong>
                     <p>{{ optional($sale->client)->dni ?? 'N/A' }}</p>
                 </div>

@@ -485,8 +485,7 @@
                 </div>
             </div>
             <div class="company-footer">
-                <img src="{{ env('FRONTEND_URL', 'http://localhost:5173') }}/logo.png" alt="Beatcell Logo"
-                    onerror="this.style.display='none'">
+                <img src="{{ env('FRONTEND_URL') }}/logo.png" alt="Beatcell Logo" onerror="this.style.display='none'">
                 <div class="company-name">Beatcell</div>
                 <div class="company-info">
                     <p>AV. LA UNION N° 1496 Piso 4 - Villa Maria Del Triunfo, Lima, Perú</p>
@@ -523,7 +522,8 @@
                 <div class="detail-card">
                     <strong>Cliente</strong>
                     <p>{{ optional($repair->client)->first_name ?? '---' }}
-                        {{ optional($repair->client)->last_name ?? '' }}</p>
+                        {{ optional($repair->client)->last_name ?? '' }}
+                    </p>
                     <strong>Tel</strong>
                     <p>{{ optional($repair->client)->phone ?? 'N/A' }}</p>
                     <strong>DNI</strong>
