@@ -3,18 +3,12 @@ let publicConfig: { public_url: string; api_url: string } | null = null;
 let configPromise: Promise<any> | null = null;
 
 const getApiUrl = () => {
-  // NUNCA usar localhost, siempre intentar desde donde se está accediendo
-  // Si accedes desde 192.168.x.x, usará 192.168.x.x:8000
-  // Si accedes desde localhost, aún así intentará localhost:8000 pero debería acceder desde IP
-  const hostname = window.location.hostname;
-  return `http://${hostname}:8000/api`;
+  return import.meta.env.VITE_API_URL;
 };
 
 const getBackendUrl = () => {
-  const hostname = window.location.hostname;
-  return `http://${hostname}:8000`;
+  return import.meta.env.VITE_BACKEND_URL;
 };
-
 /**
  * Obtiene la URL pública desde el servidor (OBLIGATORIO)
  * Esta es la ÚNICA fuente de verdad para los QR
@@ -33,18 +27,18 @@ export const fetchPublicConfig = async () => {
       try {
         const apiUrl = getApiUrl();
         const configUrl = `${apiUrl}/config`;
-        
+
         console.log(`📡 [Intento ${attempts + 1}/${maxAttempts}] Obteniendo configuración desde:`, configUrl);
-        
+
         const response = await fetch(configUrl, {
           method: 'GET',
           headers: { 'Accept': 'application/json' },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           console.log('✅ Respuesta de config:', data);
-          
+
           if (data.success && data.public_url) {
             publicConfig = {
               public_url: data.public_url,
@@ -59,17 +53,17 @@ export const fetchPublicConfig = async () => {
       } catch (error) {
         console.warn(`⚠️ Intento ${attempts + 1} falló:`, error);
       }
-      
+
       attempts++;
       if (attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 500)); // Esperar 500ms antes de reintentar
       }
     }
-    
+
     console.error('❌ No se pudo obtener la configuración del servidor después de 3 intentos');
     console.error('❌ Asegúrate de acceder desde la IP correcta (ejemplo: http://192.168.18.6:5173)');
     console.error('❌ NO uses localhost - accede siempre desde la IP del servidor');
-    
+
     return null;
   })();
 

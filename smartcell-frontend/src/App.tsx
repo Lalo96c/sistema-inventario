@@ -57,9 +57,7 @@ export default function App() {
           <h1 className="text-2xl font-bold text-red-600 mb-4">⚠️ Error de Configuración</h1>
           <p className="text-red-500 mb-2">{configError}</p>
           <p className="text-gray-600">
-            Asegúrate de acceder desde la IP correcta del servidor<br />
-            <strong>NO uses localhost</strong><br />
-            Ejemplo: <code className="bg-gray-100 px-2 py-1">http://192.168.18.6:5173</code>
+            Verifica la conexión con el servidor backend.
           </p>
         </div>
       </div>
