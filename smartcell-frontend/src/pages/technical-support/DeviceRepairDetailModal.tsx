@@ -35,15 +35,15 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
     // Si no, cargar desde la API - intentar con ID y UUID
     const loadImages = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-        
+        const apiUrl = import.meta.env.VITE_API_URL;
+
         // Intentar primero con el ID numérico
         let response = await fetch(`${apiUrl}/images-repair/${repair.id}`);
-        
+
         if (!response.ok) {
           console.warn(`No se encontraron imágenes con ID ${repair.id}, status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         if (data.success && Array.isArray(data.images) && data.images.length > 0) {
           console.log('Imágenes cargadas de API:', data.images);
@@ -74,8 +74,8 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
 
   if (!open || !repair) return null;
 
-  const total = typeof repair.total_amount === 'string' 
-    ? parseFloat(repair.total_amount) 
+  const total = typeof repair.total_amount === 'string'
+    ? parseFloat(repair.total_amount)
     : repair.total_amount;
 
   return (
@@ -289,7 +289,7 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
             <p className="text-sm text-slate-600 mb-4 text-center">
               Código: <span className="font-mono font-medium">{repair?.repair_code}</span>
             </p>
-            
+
             <div className="mb-6 p-4 bg-white border border-slate-200 rounded-lg">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
@@ -299,7 +299,7 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
                 className="w-48 h-48"
               />
             </div>
-            
+
             <div className="flex flex-col gap-2 w-full">
               <button
                 onClick={handleOpenReceipt}

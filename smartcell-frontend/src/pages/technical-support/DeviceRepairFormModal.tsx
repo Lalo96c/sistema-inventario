@@ -170,30 +170,30 @@ export function DeviceRepairFormModal({
   });
 
   const [loadingTechnicians, setLoadingTechnicians] = useState(false);
-  
+
   // Mostrar/ocultar formulario rápido de cliente
   const [showQuickClientForm, setShowQuickClientForm] = useState(false);
-  
+
   // Mostrar/ocultar formulario rápido de técnico
   const [showQuickTechnicianForm, setShowQuickTechnicianForm] = useState(false);
-  
+
   // Mostrar/ocultar modal de herramientas del técnico
   const [showToolsModal, setShowToolsModal] = useState(false);
   const [selectedTechnicianName, setSelectedTechnicianName] = useState('');
-  
+
   // UUID para el repair_id en modo create
   const [repairUUID, setRepairUUID] = useState<string>('');
-  
+
   // Imágenes obtenidas de la API
   const [images, setImages] = useState<RepairImage[]>([]);
-  
+
   // Estados para editar imágenes
   const [editImages, setEditImages] = useState<RepairImage[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
-  
+
   // Polling interval
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  
+
   // Ref para el QR
   const qrRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -204,7 +204,7 @@ export function DeviceRepairFormModal({
 
     if (mode === 'edit' && initialRepair) {
       setForm(formFromRepair(initialRepair));
-      
+
       // Cargar imágenes de la reparación
       if (initialRepair.images && initialRepair.images.length > 0) {
         setEditImages(initialRepair.images);
@@ -352,18 +352,18 @@ export function DeviceRepairFormModal({
 
   async function handleUploadImage(file: File) {
     if (!initialRepair?.id) return;
-    
+
     setUploadingImage(true);
     try {
       const formData = new FormData();
       formData.append('image', file);
-      
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/images-repair/${initialRepair.id}`, {
         method: 'POST',
         body: formData,
       });
-      
+
       const data = await response.json();
       if (data.success) {
         // Agregar imagen a la lista
@@ -386,15 +386,15 @@ export function DeviceRepairFormModal({
   async function handleDeleteImage(imageName: string) {
     if (!initialRepair?.id) return;
     if (!confirm('¿Eliminar esta imagen?')) return;
-    
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const apiUrl = import.meta.env.VITE_API_URL;
       // URL-encode el nombre del archivo para caracteres especiales
       const encodedFileName = encodeURIComponent(imageName);
       const response = await fetch(`${apiUrl}/images-repair/${initialRepair.id}/${encodedFileName}`, {
         method: 'DELETE',
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setEditImages(editImages.filter(img => img.name !== imageName));
@@ -421,7 +421,7 @@ export function DeviceRepairFormModal({
   // Manejar selección de técnico - abrir modal de herramientas
   function handleTechnicianSelected(technicianId: number | null) {
     setForm({ ...form, technician_id: technicianId });
-    
+
     if (technicianId && mode === 'edit') {
       // Obtener nombre del técnico para mostrar en el modal
       // Por ahora usamos un placeholder, idealmente vendría del backend
@@ -482,7 +482,7 @@ export function DeviceRepairFormModal({
                     ref={qrRef}
                     className="flex justify-center p-3 bg-white rounded-lg border border-indigo-300"
                   />
-                  
+
                   {/* ID */}
                   <div className="text-center w-full">
                     <p className="text-xs text-indigo-600 mb-2">ID de reparación:</p>
@@ -490,7 +490,7 @@ export function DeviceRepairFormModal({
                       {repairUUID}
                     </p>
                   </div>
-                  
+
                   {/* Instrucción */}
                   <p className="text-xs text-indigo-700 text-center">
                     Escanea el QR con tu teléfono para cargar imágenes
@@ -505,7 +505,7 @@ export function DeviceRepairFormModal({
                 <h3 className="text-sm font-semibold text-blue-900 mb-3">
                   Imágenes ({editImages.length})
                 </h3>
-                
+
                 {editImages.length > 0 && (
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-4">
                     {editImages.map((image) => (
@@ -528,7 +528,7 @@ export function DeviceRepairFormModal({
                     ))}
                   </div>
                 )}
-                
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -541,7 +541,7 @@ export function DeviceRepairFormModal({
                   disabled={uploadingImage}
                   className="hidden"
                 />
-                
+
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -567,7 +567,7 @@ export function DeviceRepairFormModal({
                         className="w-full h-24 object-cover rounded border border-green-200"
                         loading="lazy"
                       />
-                      
+
                     </div>
                   ))}
                 </div>
@@ -724,12 +724,12 @@ export function DeviceRepairFormModal({
                     form.device_lock_type === 'PIN'
                       ? 'Ej: 1234'
                       : form.device_lock_type === 'Patrón'
-                      ? 'Ej: 1-&gt;2-&gt;5-&gt;9-&gt;8 (numeración de puntos)'
-                      : form.device_lock_type === 'Contraseña'
-                      ? 'Ej: miPass2026'
-                      : form.device_lock_type === 'Otro'
-                      ? 'Describe el bloqueo...' 
-                      : 'Selecciona el tipo de bloqueo primero'
+                        ? 'Ej: 1-&gt;2-&gt;5-&gt;9-&gt;8 (numeración de puntos)'
+                        : form.device_lock_type === 'Contraseña'
+                          ? 'Ej: miPass2026'
+                          : form.device_lock_type === 'Otro'
+                            ? 'Describe el bloqueo...'
+                            : 'Selecciona el tipo de bloqueo primero'
                   }
                   value={form.device_lock_value}
                   onChange={(e) => setForm({ ...form, device_lock_value: e.target.value })}

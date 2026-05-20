@@ -308,7 +308,7 @@ export function HomeDashboard() {
                             <p className="mt-1 text-sm text-slate-600">
                                 Base típica en desarrollo:{' '}
                                 <code className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-xs text-slate-800">
-                                    http://localhost:8000/api
+                                    {import.meta.env.VITE_API_URL}
                                 </code>
                             </p>
                             <div className="mt-4 grid gap-2 sm:grid-cols-2">

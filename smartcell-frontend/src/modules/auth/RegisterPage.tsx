@@ -9,7 +9,7 @@ export function RegisterPage() {
         <>
           Regístrate para usar la aplicación. En desarrollo, la API suele estar en{' '}
           <code className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-xs text-slate-800">
-            localhost:8000/api
+            {import.meta.env.VITE_API_URL}
           </code>
           .
         </>
