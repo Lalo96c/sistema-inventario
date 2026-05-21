@@ -73,6 +73,7 @@ CMD ["sh", "-c", "\
     php artisan cache:clear && \
     php artisan config:cache && \
     php artisan migrate --force && \
+    php artisan storage:link && \
     envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && \
     php-fpm -D && \
     exec nginx -g 'daemon off;' \
