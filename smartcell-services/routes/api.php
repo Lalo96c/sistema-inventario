@@ -44,12 +44,14 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
     Route::get('/sales', [SaleController::class, 'index']);
+    Route::get('/sales/next-code', [SaleController::class, 'nextCode']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::get('/sales/{sale}', [SaleController::class, 'show']);
     Route::put('/sales/{sale}', [SaleController::class, 'update']);
     Route::delete('/sales/{sale}', [SaleController::class, 'destroy']);
 
     Route::get('/purchases', [PurchaseController::class, 'index']);
+    Route::get('/purchases/next-code', [PurchaseController::class, 'nextCode']);
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{purchase}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{purchase}', [PurchaseController::class, 'update']);

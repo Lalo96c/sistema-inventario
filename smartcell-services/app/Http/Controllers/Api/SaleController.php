@@ -17,6 +17,29 @@ use Illuminate\Validation\ValidationException;
 
 class SaleController extends Controller
 {
+    /**
+     * Obtiene el próximo código de venta disponible con formato SAL-000001
+     */
+    public function nextCode(): JsonResponse
+    {
+        $lastSale = Sale::query()
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$lastSale || !$lastSale->sale_code) {
+            $nextNumber = 1;
+        } else {
+            // Extraer el número del código anterior (ej: "SAL-000005" -> 5)
+            preg_match('/\d+$/', $lastSale->sale_code, $matches);
+            $lastNumber = $matches ? (int) $matches[0] : 0;
+            $nextNumber = $lastNumber + 1;
+        }
+
+        $nextCode = 'SAL-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return response()->json(['next_code' => $nextCode]);
+    }
+
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 15);

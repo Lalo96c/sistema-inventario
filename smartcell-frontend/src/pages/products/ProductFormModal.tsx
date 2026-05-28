@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { ModalScaffold } from '../../components/ModalScaffold';
 import type { ApiProduct, ProductPayload, ProductStatus } from '../../types/product';
 import {
@@ -16,9 +16,19 @@ type FormState = {
   status: ProductStatus;
 };
 
+/**
+ * Genera un código de producto automático secuencial
+ * Formato: PRD-{6 dígitos basados en timestamp}
+ */
+function generateProductCode(): string {
+  const timestamp = Date.now();
+  const lastDigits = String(timestamp).slice(-6);
+  return `PRD-${lastDigits}`;
+}
+
 function emptyForm(): FormState {
   return {
-    code: '',
+    code: generateProductCode(),
     name: '',
     category: '',
     quantity: 0,
@@ -66,6 +76,16 @@ function ProductFormModalBody({
     return emptyForm();
   });
 
+  // Regenerar código automático en modo create
+  useEffect(() => {
+    if (mode === 'create') {
+      setForm((f) => ({
+        ...f,
+        code: generateProductCode(),
+      }));
+    }
+  }, [mode]);
+
   function handleQuantityChange(value: string) {
     const q = Number.parseInt(value, 10);
     const quantity = Number.isNaN(q) ? 0 : Math.max(0, q);
@@ -92,70 +112,73 @@ function ProductFormModalBody({
 
   return (
     <ModalScaffold onBackdropClick={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="product-form-title"
-        className="h-auto w-full max-w-lg shrink-0 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xl shadow-slate-900/15"
-      >
-        <h2 id="product-form-title" className="text-lg font-semibold text-slate-900">
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+        
+        {/* HEADER */}
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">
           {mode === 'create' ? 'Nuevo producto' : 'Editar producto'}
         </h2>
 
-        {apiErrors.length > 0 ? (
-          <ul className="mt-3 list-inside list-disc rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
-            {apiErrors.map((msg) => (
-              <li key={msg}>{msg}</li>
-            ))}
-          </ul>
-        ) : null}
+        {/* ERRORES */}
+        {apiErrors.length > 0 && (
+          <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200">
+            <ul className="list-inside list-disc text-sm text-rose-700">
+              {apiErrors.map((msg) => (
+                <li key={msg}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div>
-            <label htmlFor="p-code" className="block text-sm font-medium text-slate-700">
-              Código
-            </label>
-            <input
-              id="p-code"
-              required
-              maxLength={100}
-              value={form.code}
-              onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
-              disabled={mode === 'edit'}
-              title={mode === 'edit' ? 'El código no se puede cambiar' : undefined}
-            />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          
+          {/* CÓDIGO Y NOMBRE */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="p-code" className="block text-sm font-medium text-slate-700 mb-1">
+                Código
+              </label>
+              <div className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 bg-slate-50 flex items-center cursor-not-allowed opacity-75">
+                {form.code}
+              </div>
+            </div>
+            <div>
+              <label htmlFor="p-name" className="block text-sm font-medium text-slate-700 mb-1">
+                Nombre *
+              </label>
+              <input
+                id="p-name"
+                type="text"
+                required
+                maxLength={255}
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition"
+              />
+            </div>
           </div>
+
+          {/* CATEGORÍA */}
           <div>
-            <label htmlFor="p-name" className="block text-sm font-medium text-slate-700">
-              Nombre
-            </label>
-            <input
-              id="p-name"
-              required
-              maxLength={255}
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="p-category" className="block text-sm font-medium text-slate-700">
-              Categoría
+            <label htmlFor="p-category" className="block text-sm font-medium text-slate-700 mb-1">
+              Categoría *
             </label>
             <input
               id="p-category"
+              type="text"
               required
               maxLength={255}
               value={form.category}
               onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+
+          {/* CANTIDAD Y PRECIO */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="p-qty" className="block text-sm font-medium text-slate-700">
-                Cantidad
+              <label htmlFor="p-qty" className="block text-sm font-medium text-slate-700 mb-1">
+                Cantidad *
               </label>
               <input
                 id="p-qty"
@@ -164,12 +187,12 @@ function ProductFormModalBody({
                 required
                 value={form.quantity}
                 onChange={(e) => handleQuantityChange(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition"
               />
             </div>
             <div>
-              <label htmlFor="p-price" className="block text-sm font-medium text-slate-700">
-                Precio venta
+              <label htmlFor="p-price" className="block text-sm font-medium text-slate-700 mb-1">
+                Precio venta (S/) *
               </label>
               <input
                 id="p-price"
@@ -179,12 +202,14 @@ function ProductFormModalBody({
                 required
                 value={form.sale_price}
                 onChange={(e) => setForm((f) => ({ ...f, sale_price: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition"
               />
             </div>
           </div>
+
+          {/* ESTADO */}
           <div>
-            <label htmlFor="p-status" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="p-status" className="block text-sm font-medium text-slate-700 mb-1">
               Estado
             </label>
             <select
@@ -193,7 +218,7 @@ function ProductFormModalBody({
               onChange={(e) =>
                 setForm((f) => ({ ...f, status: e.target.value as ProductStatus }))
               }
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition bg-white"
             >
               {(Object.entries(PRODUCT_STATUS_LABELS) as [ProductStatus, string][]).map(
                 ([value, label]) => (
@@ -205,20 +230,21 @@ function ProductFormModalBody({
             </select>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          {/* BOTONES */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-60"
+              className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition"
             >
-              {submitting ? 'Guardando…' : mode === 'create' ? 'Crear' : 'Guardar'}
+              {submitting ? 'Guardando…' : mode === 'create' ? 'Crear producto' : 'Guardar cambios'}
             </button>
           </div>
         </form>

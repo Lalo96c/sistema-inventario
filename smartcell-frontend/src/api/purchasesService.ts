@@ -83,6 +83,23 @@ export async function fetchPurchase(id: number): Promise<Purchase> {
   return data;
 }
 
+/**
+ * Obtiene el próximo código de compra del servidor (auto-increment)
+ */
+export async function fetchNextPurchaseCode(): Promise<string> {
+  try {
+    const { data } = await httpClient.get<{ next_code: string }>(
+      '/purchases/next-code'
+    );
+    return data.next_code;
+  } catch {
+    // Si el endpoint no existe, generar localmente con formato PUR-000001
+    const timestamp = Date.now();
+    const lastDigits = String(timestamp).slice(-6);
+    return `PUR-${lastDigits}`;
+  }
+}
+
 export async function createPurchase(purchase: {
   purchase_code: string;
   purchase_date: string;

@@ -16,8 +16,8 @@ import type {
 } from '../../types/client';
 import { LaravelPaginationMeta } from '../../types/product';
 import { ClientFormModal } from './ClientFormModal';
+import { ClientDetailModal } from './ClientDetailModal';
 
-// 🔥 MAPEO
 function mapClientRow(c: ApiClient): ClientTableRow {
   return {
     id: c.id,
@@ -45,6 +45,8 @@ export function ClientesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [editingClient, setEditingClient] = useState<ApiClient | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<ApiClient | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formApiErrors, setFormApiErrors] = useState<string[]>([]);
 
@@ -52,8 +54,8 @@ export function ClientesPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await fetchClients({ 
-        page: p, 
+      const res = await fetchClients({
+        page: p,
         per_page: 15,
         dni: filters.dni,
         first_name: filters.first_name,
@@ -99,6 +101,10 @@ export function ClientesPage() {
     setFormApiErrors([]);
     setModalOpen(true);
   }
+  function openView(row: ClientTableRow) {
+    setSelectedClient(row._raw);
+    setDetailOpen(true);
+  }
 
   // 🔥 SUBMIT
   async function handleFormSubmit(payload: ClientPayload) {
@@ -128,8 +134,8 @@ export function ClientesPage() {
     try {
       await deleteClient(row.id);
 
-      const res = await fetchClients({ 
-        page, 
+      const res = await fetchClients({
+        page,
         per_page: 15,
         dni: filters.dni,
         first_name: filters.first_name,
@@ -168,6 +174,13 @@ export function ClientesPage() {
       cellClassName: 'text-right whitespace-nowrap',
       render: (r) => (
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => openView(r)}
+            className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
+          >
+            Ver
+          </button>
           <button
             type="button"
             onClick={() => openEdit(r)}
@@ -335,6 +348,11 @@ export function ClientesPage() {
         onSubmit={handleFormSubmit}
         submitting={formSubmitting}
         apiErrors={formApiErrors}
+      />
+      <ClientDetailModal
+        open={detailOpen}
+        client={selectedClient}
+        onClose={() => setDetailOpen(false)}
       />
     </div>
   );

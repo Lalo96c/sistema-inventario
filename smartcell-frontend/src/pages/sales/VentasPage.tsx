@@ -63,8 +63,8 @@ export function VentasPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await fetchSales({ 
-        page: p, 
+      const res = await fetchSales({
+        page: p,
         per_page: 15,
         sale_code: filters.sale_code,
         date_from: filters.date_from,
@@ -140,8 +140,8 @@ export function VentasPage() {
     if (!window.confirm(`¿Eliminar la venta «${row.codigo}»?`)) return;
     try {
       await deleteSale(row.id);
-      const res = await fetchSales({ 
-        page, 
+      const res = await fetchSales({
+        page,
         per_page: 15,
         sale_code: filters.sale_code,
         date_from: filters.date_from,
@@ -187,7 +187,7 @@ export function VentasPage() {
           <button
             type="button"
             onClick={() => openDetail(r)}
-            className="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
           >
             Ver
           </button>

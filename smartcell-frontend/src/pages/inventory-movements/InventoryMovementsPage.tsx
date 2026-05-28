@@ -22,6 +22,7 @@ import {
   INVENTORY_MOVEMENT_REASON,
 } from '../../types/inventoryMovement';
 import { InventoryMovementFormModal } from './InventoryMovementFormModal';
+import { InventoryMovementDetailModal } from './InventoryMovementDetailModal';
 
 function mapMovementRow(m: ApiInventoryMovement): InventoryMovementTableRow {
   return {
@@ -57,6 +58,8 @@ export function InventoryMovementsPage() {
   const [editingMovement, setEditingMovement] = useState<ApiInventoryMovement | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formApiErrors, setFormApiErrors] = useState<string[]>([]);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedMovement, setSelectedMovement] = useState<ApiInventoryMovement | null>(null);
 
   const loadMovements = useCallback(async (p = 1) => {
     setLoading(true);
@@ -117,6 +120,10 @@ export function InventoryMovementsPage() {
     setEditingMovement(row._raw);
     setFormApiErrors([]);
     setModalOpen(true);
+  }
+  function openDetail(row: InventoryMovementTableRow) {
+    setSelectedMovement(row._raw);
+    setDetailOpen(true);
   }
 
   async function handleFormSubmit(payload: InventoryMovementPayload) {
@@ -194,6 +201,13 @@ export function InventoryMovementsPage() {
       cellClassName: 'text-right whitespace-nowrap',
       render: (r) => (
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => openDetail(r)}
+            className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
+          >
+            Ver
+          </button>
           <button
             type="button"
             onClick={() => openEdit(r)}
@@ -392,6 +406,11 @@ export function InventoryMovementsPage() {
         onSubmit={handleFormSubmit}
         submitting={formSubmitting}
         apiErrors={formApiErrors}
+      />
+      <InventoryMovementDetailModal
+        open={detailOpen}
+        movement={selectedMovement}
+        onClose={() => setDetailOpen(false)}
       />
     </div >
   );

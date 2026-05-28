@@ -28,6 +28,23 @@ export async function fetchSale(id: number | string): Promise<ApiSale> {
   return data.data;
 }
 
+/**
+ * Obtiene el próximo código de venta del servidor (auto-increment)
+ */
+export async function fetchNextSaleCode(): Promise<string> {
+  try {
+    const { data } = await httpClient.get<{ next_code: string }>(
+      '/sales/next-code'
+    );
+    return data.next_code;
+  } catch {
+    // Si el endpoint no existe, generar localmente con formato SAL-000001
+    const timestamp = Date.now();
+    const lastDigits = String(timestamp).slice(-6);
+    return `SAL-${lastDigits}`;
+  }
+}
+
 export async function createSale(payload: SalePayload): Promise<ApiSale> {
   const { data } = await httpClient.post<{ data: ApiSale }>('/sales', payload);
   return data.data;

@@ -191,7 +191,7 @@ export function ComprasPage() {
                     <button
                         type="button"
                         onClick={() => openDetail(r)}
-                        className="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                        className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
                     >
                         Ver
                     </button>

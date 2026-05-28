@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { ClientSearchSelect } from '../../components/ClientSearchSelect';
 import { QuickClientForm } from '../../components/QuickClientForm';
 import { ModalScaffold } from '../../components/ModalScaffold';
 import type { ApiSale, SalePayload } from '../../types/sale';
 import type { ApiClient } from '../../types/client';
 import { ProductSearchSelect } from '../../components/ProductSearchSelect';
+import { fetchNextSaleCode } from '../../api/salesService';
 
 type LineForm = {
   product_id: number;
@@ -75,6 +76,33 @@ function SaleFormModalBody({
   });
 
   const [showQuickClientForm, setShowQuickClientForm] = useState(false);
+  const [loadingCode, setLoadingCode] = useState(false);
+
+  // Actualizar formulario cuando cambien initialSale, el modo o se abra el modal
+  useEffect(() => {
+    if (mode === 'edit' && initialSale) {
+      setForm(formFromSale(initialSale));
+    } else if (mode === 'create') {
+      setForm(emptyForm());
+    }
+  }, [initialSale, mode]);
+
+  // Obtener el próximo código de venta del servidor (solo en modo create y cuando abre)
+  useEffect(() => {
+    if (mode === 'create' && !form.sale_code) {
+      setLoadingCode(true);
+      fetchNextSaleCode()
+        .then((code) => {
+          setForm((f) => ({
+            ...f,
+            sale_code: code,
+          }));
+        })
+        .finally(() => {
+          setLoadingCode(false);
+        });
+    }
+  }, [mode]);
 
   function setLine(i: number, patch: Partial<LineForm>) {
     setForm((f) => {
@@ -150,18 +178,24 @@ function SaleFormModalBody({
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="px-6 py-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="sm:col-span-2">
+            <div className="sm:col-span-2">
                 <label htmlFor="sale-code" className="block text-sm font-medium text-slate-700">
                   Código de venta
                 </label>
                 <input
                   id="sale-code"
-                  required
-                  maxLength={64}
-                  value={form.sale_code}
-                  onChange={(e) => setForm((f) => ({ ...f, sale_code: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500/30 focus:border-indigo-400 focus:ring-2"
+                  type="text"
+                  readOnly
+                  disabled={loadingCode}
+                  value={form.sale_code || (loadingCode ? 'Cargando...' : '')}
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none cursor-not-allowed disabled:opacity-60"
+                  title={mode === 'create' ? 'Generado automáticamente' : 'El código no se puede editar'}
                 />
+                <p className="mt-1 text-xs text-slate-500">
+                  {mode === 'create' 
+                    ? 'Se genera automáticamente al guardar'
+                    : 'El código no se puede editar'}
+                </p>
               </div>
               <div>
                 <label htmlFor="sale-date" className="block text-sm font-medium text-slate-700">
@@ -296,7 +330,7 @@ function SaleFormModalBody({
 
       {/* Formulario rápido para crear cliente */}
       <QuickClientForm
-        open={showQuickClientForm}
+        isOpen={showQuickClientForm}
         onClose={() => setShowQuickClientForm(false)}
         onClientCreated={handleClientCreated}
       />

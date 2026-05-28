@@ -5,6 +5,7 @@ import { PageHeader } from '../../components/layout/PageHeader';
 import { fetchTechnicians, createTechnician, updateTechnician, deleteTechnician, ApiTechnician, TechnicianPayload } from '../../api/techniciansApi';
 import type { LaravelPaginationMeta } from '../../types/product';
 import TechnicianForm from './TechnicianForm';
+import { TechnicianDetailModal } from './TechnicianDetailModal';
 
 type TechnicianTableRow = {
   id: number;
@@ -31,6 +32,8 @@ export default function TechniciansPage() {
   }>({ name: '', dni: '', specialty: '', status: '' });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedTechnician, setSelectedTechnician] = useState<any | null>(null);
   const [editingTechnician, setEditingTechnician] = useState<ApiTechnician | null>(null);
 
   const loadTechnicians = useCallback(async (pageNumber = 1) => {
@@ -93,6 +96,11 @@ export default function TechniciansPage() {
     setEditingTechnician(technician._raw);
     setModalOpen(true);
   };
+
+  function openDetail(row: any) {
+    setSelectedTechnician(row);
+    setDetailOpen(true);
+  }
 
   const handleFormSubmit = async (payload: TechnicianPayload) => {
     if (modalMode === 'create') {
@@ -166,6 +174,13 @@ export default function TechniciansPage() {
       cellClassName: 'text-right whitespace-nowrap',
       render: (row) => (
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => openDetail(row._raw)}
+            className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
+          >
+            Ver
+          </button>
           <button
             type="button"
             onClick={() => openEdit(row)}
@@ -295,7 +310,11 @@ export default function TechniciansPage() {
           ) : null}
         </div>
       </div>
-
+      <TechnicianDetailModal
+        open={detailOpen}
+        technician={selectedTechnician}
+        onClose={() => setDetailOpen(false)}
+      />
       {modalOpen && (
         <TechnicianForm
           title={modalMode === 'create' ? 'Nuevo técnico' : 'Editar técnico'}
@@ -303,7 +322,9 @@ export default function TechniciansPage() {
           onSubmit={handleFormSubmit}
           onClose={() => setModalOpen(false)}
         />
+
       )}
+
     </div>
   );
 }

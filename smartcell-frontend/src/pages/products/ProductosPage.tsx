@@ -19,6 +19,7 @@ import type {
 import { PRODUCT_STATUS, PRODUCT_STATUS_LABELS } from '../../types/product';
 import { ProductFormModal } from './ProductFormModal';
 import { StockBadge } from './StockBadge';
+import { ProductDetailModal } from './ProductDetailModal';
 
 function mapProductRow(p: ApiProduct): ProductTableRow {
   const precio =
@@ -53,6 +54,8 @@ export function ProductosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [editingProduct, setEditingProduct] = useState<ApiProduct | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ApiProduct | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formApiErrors, setFormApiErrors] = useState<string[]>([]);
 
@@ -60,8 +63,8 @@ export function ProductosPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await fetchProducts({ 
-        page: p, 
+      const res = await fetchProducts({
+        page: p,
         per_page: 15,
         name: filters.name,
         code: filters.code,
@@ -115,6 +118,11 @@ export function ProductosPage() {
     setEditingProduct(row._raw);
     setFormApiErrors([]);
     setModalOpen(true);
+  }
+
+  function openView(row: ProductTableRow) {
+    setSelectedProduct(row._raw);
+    setDetailOpen(true);
   }
 
   async function handleFormSubmit(payload: ProductPayload) {
@@ -183,6 +191,13 @@ export function ProductosPage() {
       cellClassName: 'text-right whitespace-nowrap',
       render: (r) => (
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => openView(r)}
+            className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800 hover:bg-blue-100"
+          >
+            Ver
+          </button>
           <button
             type="button"
             onClick={() => openEdit(r)}

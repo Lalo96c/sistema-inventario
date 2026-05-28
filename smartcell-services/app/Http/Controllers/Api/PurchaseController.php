@@ -17,6 +17,29 @@ use Illuminate\Validation\ValidationException;
 
 class PurchaseController extends Controller
 {
+    /**
+     * Obtiene el próximo código de compra disponible con formato PUR-000001
+     */
+    public function nextCode(): JsonResponse
+    {
+        $lastPurchase = Purchase::query()
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$lastPurchase || !$lastPurchase->purchase_code) {
+            $nextNumber = 1;
+        } else {
+            // Extraer el número del código anterior (ej: "PUR-000005" -> 5)
+            preg_match('/\d+$/', $lastPurchase->purchase_code, $matches);
+            $lastNumber = $matches ? (int) $matches[0] : 0;
+            $nextNumber = $lastNumber + 1;
+        }
+
+        $nextCode = 'PUR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return response()->json(['next_code' => $nextCode]);
+    }
+
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 15);
