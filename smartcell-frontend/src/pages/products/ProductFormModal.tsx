@@ -16,10 +16,6 @@ type FormState = {
   status: ProductStatus;
 };
 
-/**
- * Genera un código de producto automático secuencial
- * Formato: PRD-{6 dígitos basados en timestamp}
- */
 function generateProductCode(): string {
   const timestamp = Date.now();
   const lastDigits = String(timestamp).slice(-6);

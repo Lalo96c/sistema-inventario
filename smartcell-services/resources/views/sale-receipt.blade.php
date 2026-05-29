@@ -497,6 +497,152 @@
                 font-size: 11px;
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-send {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+        }
+
+        .modal-btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-btn-send:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-btn-cancel {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -610,11 +756,139 @@
 
         <div class="actions">
             <button class="btn" onclick="window.print()">Imprimir</button>
+            <button class="btn btn-secondary" onclick="openWhatsappModal()">Enviar por WhatsApp</button>
         </div>
     </div>
 
+    <!-- Modal para enviar por WhatsApp -->
+    <div id="whatsappModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📱 Enviar Boleta por WhatsApp</div>
+            <form onsubmit="sendViaWhatsapp(event)">
+                <div class="form-group">
+                    <label for="countryCode">País</label>
+                    <select id="countryCode" required style="width: 100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; transition: all 0.3s; box-sizing: border-box;" onchange="this.style.borderColor = '#2563eb'">
+                        <option value="">Selecciona un país</option>
+                        <option value="51">🇵🇪 Perú (+51)</option>
+                        <option value="54">🇦🇷 Argentina (+54)</option>
+                        <option value="56">🇨🇱 Chile (+56)</option>
+                        <option value="57">🇨🇴 Colombia (+57)</option>
+                        <option value="55">🇧🇷 Brasil (+55)</option>
+                        <option value="34">🇪🇸 España (+34)</option>
+                        <option value="1">🇺🇸 Estados Unidos (+1)</option>
+                        <option value="44">🇬🇧 Reino Unido (+44)</option>
+                        <option value="33">🇫🇷 Francia (+33)</option>
+                        <option value="49">🇩🇪 Alemania (+49)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Número de Teléfono</label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        placeholder="999 999 999" 
+                        required
+                        pattern="[0-9\s]*"
+                    >
+                    <small style="display: block; color: #94a3b8; margin-top: 6px; font-size: 12px;">
+                        Solo ingresa los dígitos del número
+                    </small>
+                </div>
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p style="color: #475569; margin-top: 10px; font-size: 12px;">Generando PDF...</p>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeWhatsappModal()">Cancelar</button>
+                    <button type="submit" class="modal-btn modal-btn-send" id="sendBtn">Enviar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-        // Sin QR para boleta de ventas
+        // Funciones para el modal de WhatsApp
+        window.openWhatsappModal = function () {
+            document.getElementById('whatsappModal').style.display = 'block';
+            document.getElementById('phoneNumber').focus();
+        };
+
+        window.closeWhatsappModal = function () {
+            document.getElementById('whatsappModal').style.display = 'none';
+            document.getElementById('phoneNumber').value = '';
+        };
+
+        // Cerrar modal cuando se hace clic fuera de él
+        window.onclick = function (event) {
+            const modal = document.getElementById('whatsappModal');
+            if (event.target === modal) {
+                closeWhatsappModal();
+            }
+        };
+
+        // Generar PDF y enviar por WhatsApp
+        window.sendViaWhatsapp = async function (event) {
+            event.preventDefault();
+            
+            const countryCode = document.getElementById('countryCode').value;
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const sendBtn = document.getElementById('sendBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            if (!countryCode) {
+                alert('Por favor selecciona un país');
+                return;
+            }
+            
+            // Validar y normalizar número de teléfono
+            const cleanPhone = phoneNumber.replace(/\D/g, '');
+            if (cleanPhone.length < 6) {
+                alert('Por favor ingresa un número de teléfono válido');
+                return;
+            }
+            
+            // Combinar código de país con número
+            const fullPhone = countryCode + cleanPhone;
+            
+            // Mostrar indicador de carga
+            sendBtn.disabled = true;
+            loadingIndicator.style.display = 'block';
+            
+            try {
+                // Obtener el contenido del comprobante
+                const element = document.querySelector('.container');
+                
+                // Opciones para html2pdf
+                const opt = {
+                    margin: 5,
+                    filename: 'boleta-{{ $sale->sale_code }}.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                
+                // Generar PDF
+                await html2pdf().set(opt).from(element).save();
+                
+                // Después de generar el PDF, abrir WhatsApp
+                setTimeout(() => {
+                    const message = 'Adjunto boleta de venta: Folio {{ $sale->sale_code }}';
+                    const encodedMessage = encodeURIComponent(message);
+                    const whatsappUrl = `https://wa.me/${fullPhone}?text=${encodedMessage}`;
+                    window.open(whatsappUrl, '_blank');
+                    
+                    // Cerrar modal
+                    closeWhatsappModal();
+                }, 500);
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('Error al generar el PDF. Por favor intenta nuevamente.');
+            } finally {
+                sendBtn.disabled = false;
+                loadingIndicator.style.display = 'none';
+            }
+        };
     </script>
 </body>
 
