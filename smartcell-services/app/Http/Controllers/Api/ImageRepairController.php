@@ -220,7 +220,27 @@ class ImageRepairController extends Controller
     {
         try {
             $disk = Storage::disk('public');
-            $filePath = "repairs/{$repairId}/{$fileName}";
+            $fileName = rawurldecode($fileName);
+            $fileName = basename($fileName);
+            $repairPath = "repairs/{$repairId}";
+            $filePath = "{$repairPath}/{$fileName}";
+
+            if (!$disk->exists($filePath)) {
+                // Buscar coincidencias en el directorio en caso de diferencias en codificación o mayúsculas
+                $files = $disk->files($repairPath);
+                $targetBase = pathinfo($fileName, PATHINFO_FILENAME);
+                foreach ($files as $file) {
+                    $candidateName = basename($file);
+                    $candidateBase = pathinfo($candidateName, PATHINFO_FILENAME);
+
+                    // Coincidencia exacta o por nombre sin extensión (p. ej. .jpg vs .webp)
+                    if ($candidateName === $fileName || mb_strtolower($candidateName) === mb_strtolower($fileName) || mb_strtolower($candidateBase) === mb_strtolower($targetBase)) {
+                        $filePath = $file;
+                        $fileName = $candidateName;
+                        break;
+                    }
+                }
+            }
 
             if (!$disk->exists($filePath)) {
                 return response()->json([
@@ -238,10 +258,16 @@ class ImageRepairController extends Controller
                 try {
                     $repair = DeviceRepair::find($repairId);
                     if ($repair && $repair->images && is_array($repair->images)) {
-                        // Filtrar el array para remover la imagen eliminada
+                        // Filtrar el array para remover la imagen eliminada.
+                        // Comparar por nombre sin extensión para cubrir cambios de extensión (jpg -> webp)
+                        $targetBase = mb_strtolower(pathinfo($fileName, PATHINFO_FILENAME));
                         $updatedImages = array_filter(
                             $repair->images,
-                            fn($img) => $img['name'] !== $fileName
+                            function ($img) use ($targetBase) {
+                                $imgName = isset($img['name']) ? $img['name'] : '';
+                                $imgBase = mb_strtolower(pathinfo($imgName, PATHINFO_FILENAME));
+                                return $imgBase !== $targetBase;
+                            }
                         );
                         // Reindiciar el array
                         $repair->images = array_values($updatedImages);

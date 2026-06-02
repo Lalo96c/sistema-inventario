@@ -6,6 +6,7 @@ export type ApiInventoryMovement = {
         id: number;
         code: string;
         name: string;
+        quantity?: number;
     };
     type: InventoryMovementType;
     quantity: number;

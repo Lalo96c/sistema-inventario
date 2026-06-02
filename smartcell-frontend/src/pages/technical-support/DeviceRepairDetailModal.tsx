@@ -72,6 +72,41 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
     }
   };
 
+  const handleOpenTicket = () => {
+    try {
+      const publicUrl = getPublicUrl();
+      const ticketUrl = `${publicUrl}/repair-ticket/${repair?.id}`;
+      window.open(ticketUrl, '_blank');
+    } catch (error) {
+      console.error('Error al abrir el ticket:', error);
+      alert('Error: Configuración no disponible');
+    }
+  };
+
+  const handleOpenPdf = () => {
+    try {
+      const publicUrl = getPublicUrl();
+      const pdfUrl = `${publicUrl}/repair-receipt/${repair?.id}`;
+      window.open(pdfUrl, '_blank');
+    } catch (error) {
+      console.error('Error al abrir el PDF:', error);
+      alert('Error: Configuración no disponible');
+    }
+  };
+
+  const handleSendPdfWhatsapp = () => {
+    try {
+      const publicUrl = getPublicUrl();
+      const pdfUrl = `${publicUrl}/repair-receipt/${repair?.id}`;
+      const message = `Comprobante de reparación: ${pdfUrl}`;
+      const encoded = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    } catch (error) {
+      console.error('Error al compartir por WhatsApp:', error);
+      alert('Error: Configuración no disponible');
+    }
+  };
+
   if (!open || !repair) return null;
 
   const total = typeof repair.total_amount === 'string'
@@ -258,21 +293,44 @@ export function DeviceRepairDetailModal({ open, repair, onClose }: DeviceRepairD
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
-          <button
-            type="button"
-            onClick={() => setShowQRModal(true)}
-            className="rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
-          >
-            🔗 Ver Comprobante QR
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            Cerrar
-          </button>
+        <div className="shrink-0 border-t border-slate-200 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+            <button
+              onClick={handleOpenTicket}
+              className="group flex flex-col items-center justify-center rounded-xl border border-blue-200 bg-blue-50 p-4 transition-all hover:border-blue-300 hover:bg-blue-100"
+            >
+              <span className="text-3xl">🖨️</span>
+              <span className="mt-2 text-sm font-medium text-blue-900">
+                Ticket 80mm
+              </span>
+              <span className="text-xs text-blue-600">
+                Impresión térmica
+              </span>
+            </button>
+
+            <button
+              onClick={handleOpenPdf}
+              className="group flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-slate-300 hover:bg-slate-100"
+            >
+              <span className="text-3xl">📄</span>
+              <span className="mt-2 text-sm font-medium text-slate-900">
+                Comprobante
+              </span>
+              <span className="text-xs text-slate-500">
+                Formato A4
+              </span>
+            </button>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
 

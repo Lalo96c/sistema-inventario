@@ -36,6 +36,21 @@ Route::delete('/images-repair/{repairId}/{fileName}', function ($repairId, $file
 Route::get('/repair-receipt/{id}', [RepairReceiptController::class, 'show'])
     ->name('repair-receipt.show');
 
+
+// Mostrar ticket térmico (80mm)
+Route::get('/repair-ticket/{id}', [RepairReceiptController::class, 'ticket'])
+    ->name('repair-ticket.thermal');
+// Nota: no se genera PDF desde la plantilla térmica; `repair-ticket-thermal.blade.php`
+// se mantiene solo para visualización/imprimir en impresoras térmicas 80mm.
+
 // Ruta para la boleta de venta (accesible públicamente)
 Route::get('/sale-receipt/{id}', [SaleReceiptController::class, 'show'])
     ->name('sale-receipt.show');
+
+// Ruta para el ticket térmico de venta 80mm
+Route::get('/sales/{id}/ticket', [SaleReceiptController::class, 'ticket'])
+    ->name('sales.ticket');
+
+// Ruta para la vista PDF/A4 de la boleta de venta
+Route::get('/sales/{id}/pdf', [SaleReceiptController::class, 'pdf'])
+    ->name('sales.pdf');

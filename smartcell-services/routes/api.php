@@ -74,6 +74,8 @@ Route::middleware('auth:api')->group(function () {
 // Rutas públicas para gestión de imágenes de reparación (sin autenticación, con CORS)
 Route::get('/images-repair/{repairId}', [ImageRepairController::class, 'show'])->name('api.images-repair.show');
 Route::post('/images-repair/{repairId}', [ImageRepairController::class, 'store'])->name('api.images-repair.store');
-Route::delete('/images-repair/{repairId}/{fileName}', [ImageRepairController::class, 'destroy'])->name('api.images-repair.destroy');
+Route::delete('/images-repair/{repairId}/{fileName}', [ImageRepairController::class, 'destroy'])
+    ->where('fileName', '.*')
+    ->name('api.images-repair.destroy');
 Route::delete('/images-repair/{repairId}', [ImageRepairController::class, 'destroyRepairFolder'])->name('api.images-repair.destroy-folder');
 

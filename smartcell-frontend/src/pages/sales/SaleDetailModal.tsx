@@ -25,13 +25,37 @@ export function SaleDetailModal({ open, sale, onClose }: SaleDetailModalProps) {
 
   const lines = sale.detail ?? [];
 
-  const handleOpenReceipt = () => {
+  const handleOpenTicket = () => {
     try {
       const publicUrl = getPublicUrl();
-      const receiptUrl = `${publicUrl}/sale-receipt/${sale?.id}`;
-      window.open(receiptUrl, '_blank');
+      const ticketUrl = `${publicUrl}/sales/${sale?.id}/ticket`;
+      window.open(ticketUrl, '_blank');
     } catch (error) {
-      console.error('Error al abrir boleta:', error);
+      console.error('Error al abrir el ticket:', error);
+      alert('Error: Configuración no disponible');
+    }
+  };
+
+  const handleOpenPdf = () => {
+    try {
+      const publicUrl = getPublicUrl();
+      const pdfUrl = `${publicUrl}/sales/${sale?.id}/pdf`;
+      window.open(pdfUrl, '_blank');
+    } catch (error) {
+      console.error('Error al abrir el PDF:', error);
+      alert('Error: Configuración no disponible');
+    }
+  };
+
+  const handleSendPdfWhatsapp = () => {
+    try {
+      const publicUrl = getPublicUrl();
+      const pdfUrl = `${publicUrl}/sales/${sale?.id}/pdf`;
+      const message = `Boleta de venta: ${pdfUrl}`;
+      const encoded = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    } catch (error) {
+      console.error('Error al compartir por WhatsApp:', error);
       alert('Error: Configuración no disponible');
     }
   };
@@ -109,21 +133,44 @@ export function SaleDetailModal({ open, sale, onClose }: SaleDetailModalProps) {
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-slate-200 px-6 py-3">
-          <button
-            type="button"
-            onClick={handleOpenReceipt}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 mr-2"
-          >
-            Ver Boleta
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-200"
-          >
-            Cerrar
-          </button>
+        <div className="shrink-0 border-t border-slate-200 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+            <button
+              onClick={handleOpenTicket}
+              className="group flex flex-col items-center justify-center rounded-xl border border-blue-200 bg-blue-50 p-4 transition-all hover:border-blue-300 hover:bg-blue-100"
+            >
+              <span className="text-3xl">🖨️</span>
+              <span className="mt-2 text-sm font-medium text-blue-900">
+                Ticket 80mm
+              </span>
+              <span className="text-xs text-blue-600">
+                Impresión térmica
+              </span>
+            </button>
+
+            <button
+              onClick={handleOpenPdf}
+              className="group flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-slate-300 hover:bg-slate-100"
+            >
+              <span className="text-3xl">📄</span>
+              <span className="mt-2 text-sm font-medium text-slate-900">
+                Comprobante
+              </span>
+              <span className="text-xs text-slate-500">
+                Formato A4
+              </span>
+            </button>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
     </ModalScaffold>

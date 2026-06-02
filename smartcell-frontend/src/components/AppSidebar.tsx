@@ -134,7 +134,7 @@ type NavItem = {
 };
 
 const DEFAULT_ITEMS: NavItem[] = [
-  { to: '/productos', label: 'Inventario', Icon: IconShoppingBag },
+  { to: '/productos', label: 'Productos', Icon: IconShoppingBag },
   { to: '/inventory-movements', label: 'Movimientos', Icon: IconArrows },
   { to: '/compras', label: 'Compras', Icon: IconTruck },
   { to: '/ventas', label: 'Ventas', Icon: IconChart },

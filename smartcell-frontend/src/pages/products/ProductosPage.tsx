@@ -20,6 +20,7 @@ import { PRODUCT_STATUS, PRODUCT_STATUS_LABELS } from '../../types/product';
 import { ProductFormModal } from './ProductFormModal';
 import { StockBadge } from './StockBadge';
 import { ProductDetailModal } from './ProductDetailModal';
+import { BarcodeModal } from '../../components/BarcodeModal';
 
 function mapProductRow(p: ApiProduct): ProductTableRow {
   const precio =
@@ -56,6 +57,8 @@ export function ProductosPage() {
   const [editingProduct, setEditingProduct] = useState<ApiProduct | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ApiProduct | null>(null);
+  const [barcodeOpen, setBarcodeOpen] = useState(false);
+  const [barcodeProduct, setBarcodeProduct] = useState<ApiProduct | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formApiErrors, setFormApiErrors] = useState<string[]>([]);
 
@@ -125,6 +128,11 @@ export function ProductosPage() {
     setDetailOpen(true);
   }
 
+  function openBarcode(row: ProductTableRow) {
+    setBarcodeProduct(row._raw);
+    setBarcodeOpen(true);
+  }
+
   async function handleFormSubmit(payload: ProductPayload) {
     setFormSubmitting(true);
     setFormApiErrors([]);
@@ -191,6 +199,13 @@ export function ProductosPage() {
       cellClassName: 'text-right whitespace-nowrap',
       render: (r) => (
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => openBarcode(r)}
+            className="rounded-lg border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-800 hover:bg-green-100"
+          >
+            Código de barras
+          </button>
           <button
             type="button"
             onClick={() => openView(r)}
@@ -378,6 +393,18 @@ export function ProductosPage() {
           ) : null}
         </div>
       </div>
+
+      <BarcodeModal
+        open={barcodeOpen}
+        product={barcodeProduct}
+        onClose={() => setBarcodeOpen(false)}
+      />
+
+      <ProductDetailModal
+        open={detailOpen}
+        product={selectedProduct}
+        onClose={() => setDetailOpen(false)}
+      />
 
       <ProductFormModal
         open={modalOpen}
