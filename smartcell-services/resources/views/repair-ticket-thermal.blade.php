@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, Helvetica, sans-serif;
             background: #f0f0f0;
             padding: 20px;
             display: flex;
@@ -21,7 +21,7 @@
         }
 
         .container {
-            width: 300px;
+            width: 80mm;
             background: #fff;
             padding: 12px 10px;
             border: 1px dashed #ccc;
@@ -40,9 +40,10 @@
         }
 
         .company-info {
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.5;
-            color: #444;
+            color: #000;
+            font-weight: 600;
         }
 
         .divider {
@@ -90,7 +91,7 @@
         }
 
         .field-row {
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.6;
         }
 
@@ -111,7 +112,7 @@
         }
 
         .field-block .value {
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.4;
         }
 
@@ -216,9 +217,7 @@
             * {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                text-rendering: geometricPrecision;
-                -webkit-font-smoothing: none;
-                font-smooth: never;
+                color: #000 !important;
             }
 
             body {
@@ -250,11 +249,13 @@
             }
 
             .company-name {
-                font-size: 14px;
+                font-size: 18px;
+                font-weight: 700;
             }
 
             .company-info {
-                font-size: 11px;
+                font-size: 12px;
+                font-weight: 600;
             }
 
             .ticket-title {
@@ -271,7 +272,7 @@
 
             .field-row,
             .field-block .value {
-                font-size: 10px;
+                font-size: 12px;
             }
 
             .section-label,
@@ -280,7 +281,7 @@
             }
 
             .total-row {
-                font-size: 10px;
+                font-size: 12px;
             }
 
             .total-row.grand {
