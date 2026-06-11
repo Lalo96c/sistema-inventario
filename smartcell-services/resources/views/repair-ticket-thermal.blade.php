@@ -13,192 +13,178 @@
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f0f0f0;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f1f1f1;
             display: flex;
             justify-content: center;
+            padding: 10px;
         }
 
+        /* =========================
+   TICKET CENTRADO POS
+========================= */
         .container {
             width: 80mm;
             background: #fff;
-            padding: 12px 10px;
-            border: 1px dashed #ccc;
-        }
-
-        /* ── CABECERA ── */
-        .header {
+            padding: 4mm 3mm;
             text-align: center;
-            margin-bottom: 8px;
         }
 
+        /* =========================
+   CABECERA
+========================= */
         .company-name {
-            font-size: 15px;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 700;
             letter-spacing: 1px;
         }
 
         .company-info {
-            font-size: 12px;
-            line-height: 1.5;
-            color: #000;
+            font-size: 13px;
             font-weight: 600;
+            line-height: 1.4;
         }
 
+        /* =========================
+   LÍNEAS
+========================= */
         .divider {
-            border: none;
-            border-top: 1px dashed #333;
+            border-top: 1px solid #000;
             margin: 6px 0;
         }
 
         .divider-solid {
-            border: none;
-            border-top: 1px solid #333;
+            border-top: 2px solid #000;
             margin: 6px 0;
         }
 
-        /* ── TÍTULO ── */
+        /* =========================
+   TÍTULO
+========================= */
         .ticket-title {
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 4px 0;
         }
 
         .ticket-code {
-            text-align: center;
-            font-size: 11px;
-            margin-bottom: 2px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .ticket-date {
-            text-align: center;
-            font-size: 10px;
-            color: #555;
-        }
-
-        /* ── CAMPOS ── */
-        .section-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #666;
-            margin-top: 6px;
-            margin-bottom: 2px;
-        }
-
-        .field-row {
             font-size: 12px;
+        }
+
+        /* =========================
+   SECCIONES
+========================= */
+        .section-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        /* =========================
+   CAMPOS CLIENTE / EQUIPO
+========================= */
+        .field-row {
+            font-size: 13px;
             line-height: 1.6;
         }
 
         .field-row span {
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .field-block {
-            font-size: 10px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .field-block .label {
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #666;
+            color: #000;
         }
 
         .field-block .value {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
         }
 
-        /* ── MONTOS ── */
+        /* =========================
+   MONTO / TOTALES
+========================= */
         .totals {
-            margin-top: 4px;
+            margin-top: 6px;
+            font-size: 13px;
         }
 
         .total-row {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
-            line-height: 1.7;
+            padding: 3px 0;
+            font-size: 13px;
+        }
+
+        .total-row span:first-child {
+            font-weight: 600;
         }
 
         .total-row.grand {
-            font-size: 12px;
-            font-weight: bold;
-            border-top: 1px solid #333;
-            padding-top: 3px;
-            margin-top: 2px;
+            font-size: 15px;
+            font-weight: 800;
+            border-top: 2px solid #000;
+            margin-top: 6px;
+            padding-top: 6px;
         }
 
-        /* ── QR ── */
+        /* =========================
+   QR
+========================= */
         .qr-section {
             text-align: center;
-            margin-top: 8px;
-            background: #fff;
-            padding: 6px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .qr-section.hidden {
-            display: none;
+            margin-top: 10px;
         }
 
         .qr-section img {
             width: 90px;
             height: 90px;
-            background: #fff;
-            display: block;
-            margin: 0 auto;
         }
 
         .qr-label {
-            font-size: 11px;
-            color: #666;
-            margin-top: 2px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        /* ── FIRMA ── */
-        .signature {
-            margin-top: 10px;
-            font-size: 11px;
-        }
-
-        .signature-line {
-            border-top: 1px dashed #333;
-            margin-top: 18px;
-            margin-bottom: 3px;
-        }
-
-        /* ── PIE ── */
+        /* =========================
+   FOOTER
+========================= */
         .footer {
-            text-align: center;
-            font-size: 11px;
-            color: #555;
-            margin-top: 8px;
-            line-height: 1.5;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10px;
+            line-height: 1.4;
         }
 
-        /* ── BOTONES ── */
+        /* =========================
+   BOTONES
+========================= */
         .actions {
             display: flex;
-            gap: 8px;
-            margin-top: 16px;
             justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
             border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
             cursor: pointer;
             color: #fff;
             background: #2563eb;
@@ -208,21 +194,10 @@
             background: #64748b;
         }
 
-        /* ══════════════════════════════════════
-           IMPRESIÓN — Xprinter XP-365B / 80mm
-           ══════════════════════════════════════ */
+        /* =========================
+   IMPRESIÓN POS
+========================= */
         @media print {
-
-            /* Nitidez en Brave/Chrome para térmicas */
-            * {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                color: #000 !important;
-            }
-
-            body {
-                -webkit-text-size-adjust: none;
-            }
 
             @page {
                 size: 80mm auto;
@@ -232,70 +207,27 @@
             html,
             body {
                 width: 80mm;
-                background: white;
-                padding: 0;
                 margin: 0;
-                display: block;
+                padding: 0;
+            }
+
+            body {
+                display: flex;
+                justify-content: center;
             }
 
             .container {
                 width: 80mm;
-                border: none;
                 padding: 4mm 3mm;
+                text-align: center;
             }
 
             .actions {
                 display: none !important;
             }
 
-            .company-name {
-                font-size: 18px;
-                font-weight: 700;
-            }
-
-            .company-info {
-                font-size: 12px;
-                font-weight: 600;
-            }
-
-            .ticket-title {
-                font-size: 11px;
-            }
-
-            .ticket-code {
-                font-size: 10px;
-            }
-
-            .ticket-date {
-                font-size: 11px;
-            }
-
-            .field-row,
-            .field-block .value {
-                font-size: 12px;
-            }
-
-            .section-label,
-            .field-block .label {
-                font-size: 11px;
-            }
-
-            .total-row {
-                font-size: 12px;
-            }
-
-            .total-row.grand {
-                font-size: 11px;
-            }
-
-            .footer,
-            .signature {
-                font-size: 11px;
-            }
-
-            .qr-section img {
-                width: 80px;
-                height: 80px;
+            * {
+                color: #000 !important;
             }
         }
     </style>
@@ -310,7 +242,7 @@
             <div class="company-info">
                 Av. La Unión N° 1496 Piso 4<br>
                 Villa María del Triunfo, Lima<br>
-                Tel: +51 910 488 419
+                Tel: +51 950 262 596
             </div>
         </div>
 
@@ -346,12 +278,6 @@
             <div class="field-block">
                 <div class="label">Tipo</div>
                 <div class="value">{{ $repair->device_type }}</div>
-            </div>
-        @endif
-        @if($repair->device_lock)
-            <div class="field-block">
-                <div class="label">Bloqueo/Patrón</div>
-                <div class="value">{{ $repair->device_lock }}</div>
             </div>
         @endif
         <div class="field-block">
