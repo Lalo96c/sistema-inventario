@@ -1,8 +1,8 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { ModalScaffold } from './ModalScaffold';
 import type { ApiProduct, ProductPayload, ProductStatus } from '../types/product';
 import { PRODUCT_STATUS, PRODUCT_STATUS_LABELS, statusFromQuantity } from '../types/product';
-import { createProduct, collectApiErrorMessages } from '../api/productsService';
+import { collectApiErrorMessages, createProduct, fetchNextProductCode } from '../api/productsService';
 
 type FormState = {
     code: string;
@@ -30,12 +30,6 @@ function emptyForm(): FormState {
         sale_price: '',
         status: PRODUCT_STATUS.SIN_STOCK,
     };
-}
-
-function generateProductCode(): string {
-    const timestamp = Date.now();
-    const lastDigits = String(timestamp).slice(-5);
-    return `PRD-${lastDigits}`;
 }
 
 function validateCode(value: string): string | undefined {
@@ -76,13 +70,26 @@ type QuickProductFormProps = {
 };
 
 export function QuickProductForm({ isOpen, onClose, onProductCreated }: QuickProductFormProps) {
-    const [form, setForm] = useState<FormState>(() => ({
-        ...emptyForm(),
-        code: generateProductCode(),
-    }));
+    const [form, setForm] = useState<FormState>(emptyForm);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [submitting, setSubmitting] = useState(false);
     const [apiErrors, setApiErrors] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        let mounted = true;
+
+        fetchNextProductCode().then((nextCode) => {
+            if (mounted) {
+                setForm((prev) => ({ ...prev, code: nextCode }));
+            }
+        });
+
+        return () => {
+            mounted = false;
+        };
+    }, [isOpen]);
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -128,8 +135,10 @@ export function QuickProductForm({ isOpen, onClose, onProductCreated }: QuickPro
             // Callback con el producto creado
             onProductCreated(response);
 
+            const nextCode = await fetchNextProductCode();
+
             // Limpiar y cerrar
-            setForm({ ...emptyForm(), code: generateProductCode() });
+            setForm({ ...emptyForm(), code: nextCode });
             setErrors({});
             onClose();
         } catch (error) {

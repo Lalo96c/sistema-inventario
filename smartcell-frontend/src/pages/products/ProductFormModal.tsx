@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { ModalScaffold } from '../../components/ModalScaffold';
+import { fetchNextProductCode } from '../../api/productsService';
 import type { ApiProduct, ProductPayload, ProductStatus } from '../../types/product';
 import {
   PRODUCT_STATUS,
@@ -16,15 +17,9 @@ type FormState = {
   status: ProductStatus;
 };
 
-function generateProductCode(): string {
-  const timestamp = Date.now();
-  const lastDigits = String(timestamp).slice(-6);
-  return `PRD-${lastDigits}`;
-}
-
 function emptyForm(): FormState {
   return {
-    code: generateProductCode(),
+    code: 'PRD-00001',
     name: '',
     category: '',
     quantity: 0,
@@ -72,14 +67,20 @@ function ProductFormModalBody({
     return emptyForm();
   });
 
-  // Regenerar código automático en modo create
   useEffect(() => {
-    if (mode === 'create') {
-      setForm((f) => ({
-        ...f,
-        code: generateProductCode(),
-      }));
-    }
+    if (mode !== 'create') return;
+
+    let mounted = true;
+
+    fetchNextProductCode().then((nextCode) => {
+      if (mounted) {
+        setForm((f) => ({ ...f, code: nextCode }));
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, [mode]);
 
   function handleQuantityChange(value: string) {

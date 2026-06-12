@@ -10,6 +10,7 @@ use App\Models\InventoryMovement;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -47,6 +48,24 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return new ProductResource($product);
+    }
+
+    public function nextCode(): JsonResponse
+    {
+        $lastCode = Product::query()
+            ->where('code', 'REGEXP', '^PRD-[0-9]{5}$')
+            ->orderByRaw('CAST(SUBSTRING(code, 5) AS UNSIGNED) DESC')
+            ->value('code');
+
+        $nextNumber = 1;
+
+        if (is_string($lastCode) && preg_match('/^PRD-(\d{5})$/', $lastCode, $matches)) {
+            $nextNumber = (int) $matches[1] + 1;
+        }
+
+        return response()->json([
+            'next_code' => sprintf('PRD-%05d', $nextNumber),
+        ]);
     }
     public function store(StoreProductRequest $request): JsonResponse
     {

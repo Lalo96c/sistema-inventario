@@ -34,6 +34,15 @@ export async function fetchProduct(id: number | string): Promise<ApiProduct> {
   return data.data;
 }
 
+export async function fetchNextProductCode(): Promise<string> {
+  try {
+    const { data } = await httpClient.get<{ next_code: string }>('/products/next-code');
+    return data.next_code;
+  } catch {
+    return 'PRD-00001';
+  }
+}
+
 export async function createProduct(
   payload: ProductPayload,
 ): Promise<ApiProduct> {

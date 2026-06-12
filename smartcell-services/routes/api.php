@@ -38,6 +38,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
 
     Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/next-code', [ProductController::class, 'nextCode']);
     Route::get('/products/{product}', [ProductController::class, 'show']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{product}', [ProductController::class, 'update']);

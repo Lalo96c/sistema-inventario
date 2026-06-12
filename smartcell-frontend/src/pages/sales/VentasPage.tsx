@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   collectApiErrorMessages,
   createSale,
@@ -98,6 +100,36 @@ export function VentasPage() {
   }
 
   const multiPage = meta && meta.last_page > 1;
+
+  function handleExportPdf() {
+    const doc = new jsPDF();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('Reporte de ventas', 14, 16);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Generado: ${new Date().toLocaleString('es-PE')}`, 14, 24);
+    doc.text(`Total de registros mostrados: ${rows.length}`, 14, 30);
+
+    autoTable(doc, {
+      startY: 38,
+      head: [['Código', 'Fecha', 'Cliente', 'Total', 'Registros']],
+      body: rows.map((row) => [
+        row.codigo,
+        row.fecha,
+        row.cliente,
+        formatCurrency(row.total),
+        String(row.lineas),
+      ]),
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [79, 70, 229] },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+    });
+
+    doc.save(`reporte-ventas-${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
 
   function openCreate() {
     setModalMode('create');
@@ -217,13 +249,23 @@ export function VentasPage() {
         title="Ventas"
         description="Registro de ventas con detalle de la venta."
         actions={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-          >
-            Nueva venta
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={loading || rows.length === 0}
+              className="inline-flex items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-800 shadow-sm hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Exportar PDF
+            </button>
+            <button
+              type="button"
+              onClick={openCreate}
+              className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+            >
+              Nueva venta
+            </button>
+          </div>
         }
       />
 

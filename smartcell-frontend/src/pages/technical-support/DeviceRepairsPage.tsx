@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   collectApiErrorMessages,
   createDeviceRepair,
@@ -107,6 +109,37 @@ export function DeviceRepairsPage() {
   }
 
   const multiPage = meta && meta.last_page > 1;
+
+  function handleExportPdf() {
+    const doc = new jsPDF();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('Reporte de reparaciones', 14, 16);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Generado: ${new Date().toLocaleString('es-PE')}`, 14, 24);
+    doc.text(`Total de registros mostrados: ${rows.length}`, 14, 30);
+
+    autoTable(doc, {
+      startY: 38,
+      head: [['Código', 'Cliente', 'Estado', 'Técnico', 'Total', 'Boleta']],
+      body: rows.map((row) => [
+        row.codigo,
+        row.cliente,
+        row.estado,
+        row.tecnico,
+        formatCurrency(row.total),
+        row.boleta,
+      ]),
+      styles: { fontSize: 9, cellPadding: 2 },
+      headStyles: { fillColor: [79, 70, 229] },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+    });
+
+    doc.save(`reporte-reparaciones-${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
 
   function openCreate() {
     setModalMode('create');
@@ -238,13 +271,23 @@ export function DeviceRepairsPage() {
         title="Reparaciones de Dispositivos"
         description="Registro de dispositivos en reparación."
         actions={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-          >
-            Nuevo servicio
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={loading || rows.length === 0}
+              className="inline-flex items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-800 shadow-sm hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Exportar PDF
+            </button>
+            <button
+              type="button"
+              onClick={openCreate}
+              className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+            >
+              Nuevo servicio
+            </button>
+          </div>
         }
       />
 
