@@ -3,10 +3,10 @@ import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const shellClass =
-  'relative flex h-full min-h-0 max-h-full w-full max-w-[20rem] flex-1 flex-col overflow-hidden rounded-2xl border border-slate-600/50 bg-slate-800 text-slate-200 shadow-lg shadow-slate-900/30 ring-1 ring-white/5';
+  'relative flex h-full min-h-0 max-h-full w-full max-w-[16rem] xl:max-w-[20rem] flex-1 flex-col overflow-hidden rounded-2xl border border-slate-600/50 bg-slate-800 text-slate-200 shadow-lg shadow-slate-900/30 ring-1 ring-white/5';
 
 const navClass =
-  'flex min-h-0 min-w-0 flex-1 flex-col gap-0.5 overflow-hidden px-2 pb-2 pt-1 font-sans text-sm font-medium';
+  'sidebar-scroll flex min-h-0 min-w-0 flex-1 flex-col gap-0.5 overflow-y-auto px-2 pb-2 pt-1 font-sans text-sm font-medium';
 
 const itemBase =
   'group flex w-full items-center rounded-xl px-3 py-2.5 text-left leading-snug outline-none transition-[color,background-color] duration-75 ease-out text-slate-300 hover:bg-white/6 hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-500/50';
