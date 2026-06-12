@@ -19,12 +19,17 @@ class DeviceRepairFactory extends Factory
      */
     public function definition(): array
     {
+        static $counter = 0;
+
         $devices = ['iPhone 12', 'Samsung Galaxy A12', 'iPhone 13 Pro', 'Samsung Galaxy S21', 'Xiaomi Redmi Note 10', 'Oppo A53', 'Vivo Y12'];
         $faults = ['Pantalla rota', 'Batería no carga', 'Botones no funcionan', 'Problema de audio', 'No enciende', 'Cámara dañada', 'Problema de conectividad'];
         $statuses = ['recibido', 'en_reparacion', 'reparado', 'entregado'];
 
+        $counter++;
+        $nextId = (int) DeviceRepair::query()->max('id') + $counter;
+
         return [
-            'repair_code' => 'REP-' . fake()->unique()->numerify('######'),
+            'repair_code' => 'REP-' . str_pad((string) $nextId, 6, '0', STR_PAD_LEFT),
             'client_id' => Client::factory(),
             'technician_id' => fake()->randomElement([Technician::factory(), null]),
             'device_type' => fake()->randomElement(['Celular', 'Laptop', 'Tablet', 'Computadora', 'Otros']),

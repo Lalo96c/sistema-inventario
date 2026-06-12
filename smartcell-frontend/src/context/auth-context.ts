@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import type { User } from '../types/auth';
-import type { LoginResponse } from '../api/authService';
+import type { LoginResponse, RegisterResponse } from '../api/authService';
 
 export type AuthContextValue = {
   user: User | null;
@@ -12,7 +12,7 @@ export type AuthContextValue = {
     email: string;
     password: string;
     password_confirmation: string;
-  }) => Promise<LoginResponse>;
+  }) => Promise<RegisterResponse>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 };

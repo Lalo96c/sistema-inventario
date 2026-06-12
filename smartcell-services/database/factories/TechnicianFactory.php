@@ -21,8 +21,8 @@ class TechnicianFactory extends Factory
 
         return [
             'name' => fake()->firstName() . ' ' . fake()->lastName(),
+            'dni' => fake()->numerify('########'),
             'specialty' => fake()->randomElement($specialties),
-            'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'status' => fake()->randomElement(['activo', 'inactivo']),
         ];

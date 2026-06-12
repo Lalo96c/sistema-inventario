@@ -333,12 +333,9 @@ export function HomeDashboard() {
                                     >
                                         Entrar
                                     </Link>
-                                    <Link
-                                        to="/register"
-                                        className="inline-flex justify-center rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 hover:bg-slate-50"
-                                    >
-                                        Crear cuenta
-                                    </Link>
+                                    <p className="text-sm text-slate-600">
+                                        Solo un administrador puede crear nuevos usuarios desde la aplicación.
+                                    </p>
                                 </div>
                             </div>
                         </section>

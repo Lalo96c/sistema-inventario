@@ -8,3 +8,4 @@ export { ComprasPage } from './purchases/ComprasPage';
 export { CategoriasPage } from './placeholderModules';
 export { SoportePage } from './technical-support/SoportePage';
 export { ClientesPage } from './clients/ClientesPage';
+export { UsersPage } from './users/UsersPage';

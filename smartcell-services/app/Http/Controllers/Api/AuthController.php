@@ -22,27 +22,46 @@ class AuthController extends Controller
             return response()->json(['message' => 'Credenciales incorrectas.'], 401);
         }
 
+        $user = auth('api')->user();
+
+        if (! $user || ! $user->is_active) {
+            auth('api')->logout();
+
+            return response()->json([
+                'message' => 'Tu cuenta está deshabilitada. Contacta al administrador.',
+            ], 403);
+        }
+
         return $this->respondWithToken($token);
     }
 
     public function register(Request $request): JsonResponse
     {
+        $user = auth('api')->user();
+
+        if (! $user || ! $user->is_admin) {
+            return response()->json([
+                'message' => 'Solo un administrador puede crear usuarios.',
+            ], 403);
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        // El modelo User usa el cast `hashed`: no usar Hash::make aquí (evita doble hash o mezcla de algoritmos).
-        $user = User::query()->create([
+        $createdUser = User::query()->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
+            'is_admin' => false,
         ]);
 
-        $token = auth('api')->login($user);
-
-        return $this->respondWithToken($token, 201);
+        return response()->json([
+            'message' => 'Usuario creado correctamente.',
+            'user' => $createdUser,
+        ], 201);
     }
 
     public function me(Request $request): JsonResponse

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SaleSeeder::class,
             DeviceRepairSeeder::class,
             PurchaseSeeder::class,
+            AdminUserSeeder::class,
         ]);
     }
 }

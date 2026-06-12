@@ -10,6 +10,7 @@ import {
   ClientesPage,
   HomeDashboard,
   HomePage,
+  UsersPage,
   InventoryMovementsPage,
   ProductosPage,
   SoportePage,
@@ -125,6 +126,14 @@ export default function App() {
               />
               <Route path="soporte" element={<SoportePage />} />
               <Route
+                path="usuarios"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <UsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="tecnicos"
                 element={
                   <ProtectedRoute>
@@ -144,9 +153,9 @@ export default function App() {
             <Route
               path="/register"
               element={
-                <GuestRoute>
+                <ProtectedRoute requireAdmin>
                   <RegisterPage />
-                </GuestRoute>
+                </ProtectedRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />

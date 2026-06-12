@@ -7,6 +7,11 @@ export type LoginResponse = {
   expires_in?: number;
 };
 
+export type RegisterResponse = {
+  message?: string;
+  user?: User;
+};
+
 export async function login(credentials: {
   email: string;
   password: string;
@@ -20,8 +25,8 @@ export async function register(payload: {
   email: string;
   password: string;
   password_confirmation: string;
-}): Promise<LoginResponse> {
-  const { data } = await httpClient.post<LoginResponse>('/auth/register', payload);
+}): Promise<RegisterResponse> {
+  const { data } = await httpClient.post<RegisterResponse>('/auth/register', payload);
   return data;
 }
 

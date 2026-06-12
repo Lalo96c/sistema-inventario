@@ -1,12 +1,11 @@
 import { isAxiosError } from 'axios';
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import {
   authErrorBoxClass,
   authInputClass,
   authLabelClass,
-  authLinkInlineClass,
   authPrimaryButtonClass,
 } from '../authFieldClasses';
 import { Spinner } from './Spinner';
@@ -108,10 +107,7 @@ export function LoginForm() {
       </div>
 
       <p className="text-center text-sm text-slate-600">
-        ¿No tienes cuenta?{' '}
-        <Link to="/register" className={authLinkInlineClass}>
-          Regístrate
-        </Link>
+        Solo los administradores pueden acceder al sistema.
       </p>
     </form>
   );

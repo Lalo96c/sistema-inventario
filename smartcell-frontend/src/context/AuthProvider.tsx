@@ -50,12 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             password: string;
             password_confirmation: string;
         }) => {
-            const data = await authService.register(payload);
-            setAccessToken(data.access_token);
-            await loadUser();
-            return data;
+            return authService.register(payload);
         },
-        [loadUser],
+        [],
     );
 
     const logout = useCallback(async () => {

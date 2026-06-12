@@ -141,6 +141,10 @@ const DEFAULT_ITEMS: NavItem[] = [
   { to: '/clientes', label: 'Clientes', Icon: IconFolder },
 ];
 
+const ADMIN_ITEMS: NavItem[] = [
+  { to: '/usuarios', label: 'Usuarios', Icon: IconFolder },
+];
+
 const TECH_ITEMS: NavItem[] = [
   { to: '/tecnicos', label: 'Técnicos', Icon: IconWrench },
   { to: '/soporte', label: 'Soporte técnico', Icon: IconInbox },
@@ -160,6 +164,7 @@ type AppSidebarProps = {
 
 export function AppSidebar({ title = 'Smartcel', items = DEFAULT_ITEMS, techItems = TECH_ITEMS }: AppSidebarProps) {
   const { isAuthenticated, user, logout } = useAuth();
+  const adminItems = user?.is_admin ? ADMIN_ITEMS : [];
 
   const handleLogout = async () => {
     await logout();
@@ -226,6 +231,32 @@ export function AppSidebar({ title = 'Smartcel', items = DEFAULT_ITEMS, techItem
             ) : null}
           </NavLink>
         ))}
+
+        {adminItems.length > 0 ? (
+          <>
+            <div className="my-2 border-t border-slate-600/30" />
+            <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Administración</p>
+            {adminItems.map(({ to, label, Icon, badge }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  [itemBase, 'group', isActive ? `${itemActive} is-nav-active` : ''].filter(Boolean).join(' ')
+                }
+              >
+                <IconWrapper>
+                  <Icon />
+                </IconWrapper>
+                <span className="flex-1">{label}</span>
+                {badge != null && badge !== '' ? (
+                  <span className="ml-2 shrink-0 rounded-full bg-indigo-500/25 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-100">
+                    {badge}
+                  </span>
+                ) : null}
+              </NavLink>
+            ))}
+          </>
+        ) : null}
 
         <div className="my-2 border-t border-slate-600/30" />
         <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Soporte técnico</p>

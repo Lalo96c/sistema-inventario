@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\DeviceRepairController;
 use App\Http\Controllers\Api\TechnicianController;
 use App\Http\Controllers\Api\ImageRepairController;
 use App\Http\Controllers\Api\ConfigController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -24,6 +25,11 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh'])->middleware('jw
 Route::middleware('auth:api')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
