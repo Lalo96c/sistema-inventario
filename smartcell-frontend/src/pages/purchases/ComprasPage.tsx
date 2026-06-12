@@ -14,6 +14,7 @@ import { PageHeader } from '../../components/layout/PageHeader';
 import type { LaravelPaginationMeta } from '../../types/product';
 import type { Purchase } from '../../api/purchasesService';
 import { formatCurrency } from '../../utils/format';
+import { ModalScaffold } from '../../components/ModalScaffold';
 import { PurchaseDetailModal } from './PurchaseDetailModal';
 import { PurchaseFormModal } from './PurchaseFormModal';
 
@@ -61,6 +62,9 @@ export function ComprasPage() {
 
     const [detailOpen, setDetailOpen] = useState(false);
     const [detailPurchase, setDetailPurchase] = useState<Purchase | null>(null);
+    const [exportModalOpen, setExportModalOpen] = useState(false);
+    const [exportDateFrom, setExportDateFrom] = useState('');
+    const [exportDateTo, setExportDateTo] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
     const [editingPurchase, setEditingPurchase] = useState<Purchase | null>(null);
@@ -104,22 +108,44 @@ export function ComprasPage() {
 
     const multiPage = meta && meta.last_page > 1;
 
-    function handleExportPdf() {
+    function openExportModal() {
+        setExportDateFrom(filters.date_from);
+        setExportDateTo(filters.date_to);
+        setExportModalOpen(true);
+    }
+
+    async function handleExportPdf() {
+        const dateFrom = exportDateFrom;
+        const dateTo = exportDateTo;
+
+        const res = await fetchPurchases(1, 1000, {
+            purchase_code: filters.purchase_code,
+            supplier_name: filters.supplier_name,
+            date_from: dateFrom || undefined,
+            date_to: dateTo || undefined,
+        });
+
+        const exportRows = (res.data ?? []).map(mapPurchaseRow);
         const doc = new jsPDF();
 
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(16);
         doc.text('Reporte de compras', 14, 16);
 
+        const periodoTexto = dateFrom || dateTo
+            ? `Periodo: ${dateFrom || 'Inicio'} a ${dateTo || 'Hoy'}`
+            : 'Periodo: Todo el historial';
+
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.text(`Generado: ${new Date().toLocaleString('es-PE')}`, 14, 24);
-        doc.text(`Total de registros mostrados: ${rows.length}`, 14, 30);
+        doc.text(periodoTexto, 14, 30);
+        doc.text(`Total de registros mostrados: ${exportRows.length}`, 14, 36);
 
         autoTable(doc, {
-            startY: 38,
+            startY: 44,
             head: [['Código', 'Fecha', 'Proveedor', 'Total', 'Registros']],
-            body: rows.map((row) => [
+            body: exportRows.map((row) => [
                 row.codigo,
                 row.fecha,
                 row.proveedor,
@@ -256,7 +282,7 @@ export function ComprasPage() {
                     <div className="flex flex-wrap items-center gap-2">
                         <button
                             type="button"
-                            onClick={handleExportPdf}
+                            onClick={openExportModal}
                             disabled={loading || rows.length === 0}
                             className="inline-flex items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-800 shadow-sm hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -409,6 +435,27 @@ export function ComprasPage() {
                     ) : null}
                 </div>
             </div>
+
+            {exportModalOpen ? (
+                <ModalScaffold onBackdropClick={() => setExportModalOpen(false)}>
+                    <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+                        <h3 className="text-lg font-semibold text-slate-900">Exportar PDF por fechas</h3>
+                        <p className="mt-1 text-sm text-slate-500">Selecciona el rango de fechas para generar el reporte.</p>
+                        <div className="mt-4 space-y-4">
+                            <label className="block text-sm text-slate-700">Fecha inicial
+                                <input type="date" value={exportDateFrom} onChange={(e) => setExportDateFrom(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                            </label>
+                            <label className="block text-sm text-slate-700">Fecha final
+                                <input type="date" value={exportDateTo} onChange={(e) => setExportDateTo(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                            </label>
+                        </div>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button type="button" onClick={() => setExportModalOpen(false)} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancelar</button>
+                            <button type="button" onClick={async () => { setExportModalOpen(false); await handleExportPdf(); }} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Exportar PDF</button>
+                        </div>
+                    </div>
+                </ModalScaffold>
+            ) : null}
 
             {/* Modal de detalle */}
             <PurchaseDetailModal
