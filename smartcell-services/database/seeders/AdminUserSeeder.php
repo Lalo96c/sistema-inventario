@@ -13,12 +13,13 @@ class AdminUserSeeder extends Seeder
         $email = env('ADMIN_EMAIL', 'admin@smartcell.test');
         $password = env('ADMIN_PASSWORD', 'Admin123!');
 
-        User::query()->firstOrCreate(
+        User::query()->updateOrCreate(
             ['email' => $email],
             [
                 'name' => 'Administrador',
                 'password' => Hash::make($password),
                 'is_admin' => true,
+                'is_active' => true,
             ]
         );
     }

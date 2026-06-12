@@ -56,6 +56,7 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => $data['password'],
             'is_admin' => false,
+            'is_active' => true,
         ]);
 
         return response()->json([
